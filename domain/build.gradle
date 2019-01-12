@@ -1,0 +1,30 @@
+apply plugin: 'java-library'
+apply plugin: 'java'
+apply plugin: "kotlin"
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    api libraries.kotlinStdlib
+    api libraries.kotlinSerialization
+
+    api libraries.rxJava
+    api libraries.rxKotlin
+    api libraries.rxRelay
+    api libraries.rxReplayingShareKotlin
+
+    api libraries.result
+    api libraries.koin
+
+    implementation libraries.rxRedux
+
+    testImplementation testLibraries.junit
+    testImplementation testLibraries.kotlinTest
+    testImplementation testLibraries.kotlinTestJunit
+    testImplementation testLibraries.mockito
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"

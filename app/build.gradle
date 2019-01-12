@@ -1,0 +1,91 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs"
+
+kapt {
+    correctErrorTypes = true
+}
+
+android {
+
+    compileSdkVersion versions.compileSdk
+
+    defaultConfig {
+
+        applicationId "msa.notes"
+        targetSdkVersion versions.targetSdk
+        minSdkVersion versions.minSdk
+
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+
+        debug {
+            manifestPlaceholders = [usesCleartextTraffic: "true"]
+        }
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [usesCleartextTraffic: "false"]
+        }
+    }
+}
+
+dependencies {
+
+    implementation project(':domain')
+    implementation project(':data')
+
+    implementation androidLibraries.rxAndroid
+    implementation androidLibraries.koinAndroid
+    implementation androidLibraries.koinScope
+    implementation androidLibraries.koinViewmodel
+    implementation androidLibraries.ankoCommons
+    implementation androidLibraries.ankoDesign
+    implementation androidLibraries.ankoCoroutines
+    implementation androidLibraries.rxBindingPlatfrom
+
+    implementation androidLibraries.annotations
+    implementation androidLibraries.viewModel
+    implementation androidLibraries.navigationFragment
+    implementation androidLibraries.navigationUi
+    implementation androidLibraries.appCompat
+    implementation androidLibraries.recyclerView
+    implementation androidLibraries.constraintLayout
+    implementation androidLibraries.design
+    implementation androidLibraries.cardView
+
+    implementation androidLibraries.epoxy
+    kapt androidLibraries.epoxyProcessor
+    implementation androidLibraries.glide
+    kapt androidLibraries.glideProcessor
+    implementation androidLibraries.runtimePermission
+    implementation androidLibraries.materialDialogsCore
+
+    implementation androidLibraries.materialProgressBar
+
+    implementation debugLibraries.timber
+
+    testImplementation testLibraries.junit
+    testImplementation testLibraries.kotlinTest
+    testImplementation testLibraries.kotlinTestJunit
+    testImplementation testLibraries.archTestCore
+
+    androidTestImplementation testLibraries.androidTestCore
+    androidTestImplementation testLibraries.androidJunit
+    androidTestImplementation testLibraries.runner
+    androidTestImplementation testLibraries.rules
+    androidTestImplementation testLibraries.espresso
+    androidTestImplementation testLibraries.espressoContrib
+    androidTestImplementation testLibraries.navigation
+    androidTestImplementation testLibraries.koinTest
+
+}
