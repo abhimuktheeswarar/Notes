@@ -30,6 +30,10 @@ class InsertUpdateNoteFragment : BaseFragment() {
             val date = Date(System.currentTimeMillis())
 
             notesViewModel.input.accept(NoteAction.InsertNoteAction(title, body, date))
+
+            edit_title.clearFocus()
+            edit_body.clearFocus()
+
             activity?.onBackPressed()
         }
     }

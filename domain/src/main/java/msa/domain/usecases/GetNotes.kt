@@ -28,6 +28,8 @@ class GetNotes(
 
             val noteState = state as NoteState
 
+            //println("sortyBy = ${noteState.sortBy}, orderBy = ${noteState.orderBy}")
+
             NoteAction.NotesLoadedAction(reArrange(it, noteState.sortBy, noteState.orderBy))
         }
     }
@@ -35,14 +37,19 @@ class GetNotes(
     fun getNotesSideEffect(actions: Observable<Action>, state: StateAccessor<State>): Observable<Action> =
         actions.ofType(NoteAction.GetNotesAction::class.java)
             .filter { (state() as NoteState).notes == null }
-            .doOnNext { println("Got GetNotesAction") }
+            .doOnNext { println("Got SortOrderNotesAction") }
             .switchMap { execute(it, state()).startWith(NoteAction.LoadingNotesAction) }
+
+    fun sortOrderNotesSideEffect(actions: Observable<Action>, state: StateAccessor<State>): Observable<Action> =
+        actions.ofType(NoteAction.SortOrderNotesAction::class.java)
+            .doOnNext { println("Got SortOrderNotesAction") }
+            .switchMap { execute(it, state()) }
 
     private fun reArrange(notes: List<Note>, sortBy: SortBy, orderBy: OrderBy): List<Note> {
 
         return when (orderBy) {
 
-            OrderBy.NA -> notes
+            OrderBy.NA -> notes.sortedBy { it.id }
 
             OrderBy.DATE -> {
 

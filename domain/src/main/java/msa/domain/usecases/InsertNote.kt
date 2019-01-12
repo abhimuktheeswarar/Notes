@@ -32,5 +32,4 @@ class InsertNote(
         actions.ofType(NoteAction.InsertNoteAction::class.java)
             .switchMap { execute(it, state()) }
 
-
 }

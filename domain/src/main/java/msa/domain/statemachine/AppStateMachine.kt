@@ -20,11 +20,17 @@ import java.util.*
 
 sealed class NoteAction : Action {
 
-    data class GetNotesAction(val sortBy: SortBy = SortBy.NA, val orderBy: OrderBy = OrderBy.NA) : NoteAction()
+    object GetNotesAction : NoteAction()
+
+    data class SortOrderNotesAction(val sortBy: SortBy = SortBy.NA, val orderBy: OrderBy = OrderBy.NA) : NoteAction()
 
     object LoadingNotesAction : NoteAction()
 
     data class NotesLoadedAction(val notes: List<Note>) : NoteAction()
+
+    object ShowNotesSortOptionsAction : NoteAction()
+
+    object HideNotesSortOptionsAction : NoteAction()
 
     data class InsertNoteAction(val title: String, val body: String, val date: Date) : NoteAction()
 
@@ -51,7 +57,8 @@ data class NoteState(
     val notes: List<Note>? = null,
     val sortBy: SortBy = SortBy.NA,
     val orderBy: OrderBy = OrderBy.NA,
-    val exception: Exception? = null
+    val exception: Exception? = null,
+    val showSortOption: Boolean = false
 ) : State
 
 class AppStateMachine(getNotes: GetNotes, insertNote: InsertNote, updateNote: UpdateNote, deleteNote: DeleteNote) :
@@ -65,6 +72,7 @@ class AppStateMachine(getNotes: GetNotes, insertNote: InsertNote, updateNote: Up
             initialState = NoteState(),
             sideEffects = listOf(
                 getNotes::getNotesSideEffect,
+                getNotes::sortOrderNotesSideEffect,
                 insertNote::insertNoteSideEffect,
                 updateNote::updateNoteSideEffect,
                 deleteNote::deleteNoteSideEffect
@@ -78,11 +86,22 @@ class AppStateMachine(getNotes: GetNotes, insertNote: InsertNote, updateNote: Up
 
         return when (action) {
 
-            is NoteAction.GetNotesAction -> state.copy(sortBy = action.sortBy, orderBy = action.orderBy)
+            is NoteAction.GetNotesAction -> state.copy(showSortOption = false)
 
-            is NoteAction.LoadingNotesAction -> state.copy(loading = true)
+            is NoteAction.SortOrderNotesAction -> state.copy(
+                loading = true,
+                sortBy = action.sortBy,
+                orderBy = action.orderBy,
+                showSortOption = false
+            )
 
-            is NoteAction.NotesLoadedAction -> state.copy(loading = false, notes = action.notes)
+            is NoteAction.LoadingNotesAction -> state.copy(loading = true, showSortOption = false)
+
+            is NoteAction.NotesLoadedAction -> state.copy(loading = false, notes = action.notes, showSortOption = false)
+
+            is NoteAction.ShowNotesSortOptionsAction -> state.copy(showSortOption = true)
+
+            is NoteAction.HideNotesSortOptionsAction -> state.copy(showSortOption = false)
 
             is NoteAction.InsertNoteAction -> state.copy(loading = false)
 
