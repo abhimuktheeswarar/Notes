@@ -4,7 +4,6 @@ import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.view.*
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -15,6 +14,7 @@ import msa.domain.statemachine.NoteState
 import msa.notes.base.BaseFragment
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
+import java.text.DateFormat
 
 
 /**
@@ -115,12 +115,7 @@ class NoteDetailFragment : BaseFragment() {
             text_title.text = note.title
             text_body.text = note.body
 
-            text_date.text = DateUtils.getRelativeTimeSpanString(
-                note.date.time,
-                System.currentTimeMillis(),
-                DateUtils.MINUTE_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_RELATIVE
-            )
+            text_date.text = DateFormat.getDateTimeInstance().format(note.date)
             Timber.d(note.toString())
 
             note.imagePath?.let { Glide.with(image_note).load(Uri.parse(it)).into(image_note) }

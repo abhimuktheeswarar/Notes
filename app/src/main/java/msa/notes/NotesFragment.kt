@@ -2,7 +2,6 @@ package msa.notes
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -26,6 +25,7 @@ import msa.notes.base.BaseEpoxyHolder
 import msa.notes.base.BaseFragment
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
+import java.text.DateFormat.getDateTimeInstance
 import java.util.*
 
 /**
@@ -242,12 +242,8 @@ abstract class NoteItemModel : EpoxyModelWithHolder<NoteItemModel.NoteItemViewHo
         super.bind(holder)
         holder.titleTextView.text = title
         holder.bodyTextView.text = body
-        holder.dateTextView.text = DateUtils.getRelativeTimeSpanString(
-            date.time,
-            System.currentTimeMillis(),
-            DateUtils.MINUTE_IN_MILLIS,
-            DateUtils.FORMAT_ABBREV_RELATIVE
-        )
+
+        holder.dateTextView.text = getDateTimeInstance().format(date)
 
         holder.deleteButton.setOnClickListener {
             itemActionListener(
