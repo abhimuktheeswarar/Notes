@@ -26,4 +26,8 @@ class NotesRepository(private val dataStoreFactory: DataStoreFactory) : Reposito
     override fun deleteNote(note: Note): Completable {
         return dataStoreFactory.localDataStore.deleteNote(note)
     }
+
+    override fun getNote(id: Int): Observable<Note> {
+        return dataStoreFactory.localDataStore.getNote(id)
+    }
 }

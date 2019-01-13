@@ -17,4 +17,6 @@ class NotesViewModel(appStateMachine: AppStateMachine) : BaseViewModel() {
         addDisposable(inputRelay.subscribe(appStateMachine.input))
         addDisposable(appStateMachine.state.subscribe { state -> mutableState.value = state })
     }
+
+
 }

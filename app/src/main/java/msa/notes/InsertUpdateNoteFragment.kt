@@ -29,7 +29,18 @@ class InsertUpdateNoteFragment : BaseFragment() {
             val body = edit_body.text.toString()
             val date = Date(System.currentTimeMillis())
 
-            notesViewModel.input.accept(NoteAction.InsertNoteAction(title, body, date))
+            val currentState = notesViewModel.state.value as? NoteState
+
+            currentState?.noteId?.let { id ->
+
+
+                notesViewModel.input.accept(NoteAction.UpdateNoteAction(id, title, body, date))
+
+            } ?: run {
+
+                notesViewModel.input.accept(NoteAction.InsertNoteAction(title, body, date))
+            }
+
 
             edit_title.clearFocus()
             edit_body.clearFocus()
@@ -45,7 +56,30 @@ class InsertUpdateNoteFragment : BaseFragment() {
         })
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val title = edit_title.text.toString()
+        val body = edit_body.text.toString()
+        val editNote = (notesViewModel.state.value as? NoteState)?.editingNote
+        editNote?.let {
+            notesViewModel.input.accept(
+                NoteAction.SaveEditNoteProgressAction(
+                    it.copy(
+                        title = title,
+                        body = body
+                    )
+                )
+            )
+        }
+    }
+
     private fun setupViews(state: NoteState) {
+
+        state.editingNote?.let { note ->
+
+            edit_title.setText(note.title)
+            edit_body.setText(note.body)
+        }
 
     }
 }

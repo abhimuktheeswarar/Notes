@@ -30,4 +30,8 @@ class LocalDataStore(private val notesDatabase: NotesDatabase) {
         return Completable.fromAction { notesDatabase.noteDao().deleteNote(NoteMapper.transform(note)) }
     }
 
+    fun getNote(id: Int): Observable<Note> {
+        return notesDatabase.noteDao().getNote(id).map { NoteMapper.transform(it) }
+    }
+
 }

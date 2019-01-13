@@ -38,6 +38,9 @@ interface NoteDao {
     @Delete
     fun deleteNote(noteEntity: NoteEntity)
 
+    @Query("SELECT * FROM noteentity WHERE id = :id")
+    fun getNote(id: Int): Observable<NoteEntity>
+
 }
 
 @Database(entities = [NoteEntity::class], version = 1)

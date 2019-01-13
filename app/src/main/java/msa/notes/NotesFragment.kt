@@ -12,6 +12,7 @@ import android.widget.ProgressBar
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.airbnb.epoxy.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.card.MaterialCardView
@@ -24,6 +25,7 @@ import msa.domain.statemachine.SortBy
 import msa.notes.base.BaseEpoxyHolder
 import msa.notes.base.BaseFragment
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -34,7 +36,16 @@ class NotesFragment : BaseFragment() {
 
     private val notesViewModel by sharedViewModel<NotesViewModel>()
 
-    private val notesController by lazy { NotesController { notesViewModel.input.accept(it) } }
+    private val notesController by lazy {
+        NotesController {
+            notesViewModel.input.accept(it)
+            if (it is NoteAction.ViewNoteDetailAction) {
+                findNavController().navigate(R.id.noteDetailFragment)
+            }
+        }
+    }
+
+    private lateinit var sortOptionDialog: BottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,23 +88,36 @@ class NotesFragment : BaseFragment() {
         notesViewModel.input.accept(NoteAction.GetNotesAction)
     }
 
+
     private fun setupViews(state: NoteState) {
+
+        Timber.d("setupViews state = ${state.showSortOption}")
 
         notesController.setNoteState(state)
 
         if (state.showSortOption) showSortOption(state)
+        else {
 
+            if (::sortOptionDialog.isInitialized) {
+                sortOptionDialog.dismiss()
+            }
+        }
     }
 
     @SuppressLint("InflateParams")
     private fun showSortOption(state: NoteState) {
 
-        val sortOptionDialog = BottomSheetDialog(context!!)
+        if (!::sortOptionDialog.isInitialized) {
+
+            sortOptionDialog = BottomSheetDialog(context!!)
+        }
+
         sortOptionDialog.setOnDismissListener { notesViewModel.input.accept(NoteAction.HideNotesSortOptionsAction) }
         sortOptionDialog.setOnCancelListener { notesViewModel.input.accept(NoteAction.HideNotesSortOptionsAction) }
         val contentView = layoutInflater.inflate(R.layout.dialog_notes_sort, null)
 
         val sortRadioGroup = contentView.findViewById<RadioGroup>(R.id.radioGroup_sort)
+
 
         when (state.orderBy) {
 

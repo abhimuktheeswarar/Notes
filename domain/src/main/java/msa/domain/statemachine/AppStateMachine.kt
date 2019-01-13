@@ -8,10 +8,7 @@ import msa.domain.core.Action
 import msa.domain.core.BaseStateMachine
 import msa.domain.core.State
 import msa.domain.entities.Note
-import msa.domain.usecases.DeleteNote
-import msa.domain.usecases.GetNotes
-import msa.domain.usecases.InsertNote
-import msa.domain.usecases.UpdateNote
+import msa.domain.usecases.*
 import java.util.*
 
 /**
@@ -26,7 +23,11 @@ sealed class NoteAction : Action {
 
     object LoadingNotesAction : NoteAction()
 
+    //object LoadingNoteAction : NoteAction()
+
     data class NotesLoadedAction(val notes: List<Note>) : NoteAction()
+
+    data class NoteLoadedAction(val note: Note) : NoteAction()
 
     object ShowNotesSortOptionsAction : NoteAction()
 
@@ -39,6 +40,16 @@ sealed class NoteAction : Action {
     data class DeleteNoteAction(val id: Int, val title: String, val body: String, val date: Date) : NoteAction()
 
     data class ViewNoteDetailAction(val id: Int) : NoteAction()
+
+    object OpenEditNoteAction : NoteAction()
+
+    object CloseEditNoteAction : NoteAction()
+
+    object CloseNoteDetailAction : NoteAction()
+
+    object HidingNotesSortOptionsAction : NoteAction()
+
+    data class SaveEditNoteProgressAction(val editNote: Note) : NoteAction()
 }
 
 enum class SortBy {
@@ -58,10 +69,19 @@ data class NoteState(
     val sortBy: SortBy = SortBy.NA,
     val orderBy: OrderBy = OrderBy.NA,
     val exception: Exception? = null,
-    val showSortOption: Boolean = false
+    val showSortOption: Boolean = false,
+    val noteId: Int? = null,
+    val note: Note? = null,
+    val editingNote: Note? = null
 ) : State
 
-class AppStateMachine(getNotes: GetNotes, insertNote: InsertNote, updateNote: UpdateNote, deleteNote: DeleteNote) :
+class AppStateMachine(
+    getNotes: GetNotes,
+    insertNote: InsertNote,
+    updateNote: UpdateNote,
+    deleteNote: DeleteNote,
+    getNote: GetNote
+) :
     BaseStateMachine<NoteState> {
 
     override val input: Relay<Action> = PublishRelay.create()
@@ -75,7 +95,8 @@ class AppStateMachine(getNotes: GetNotes, insertNote: InsertNote, updateNote: Up
                 getNotes::sortOrderNotesSideEffect,
                 insertNote::insertNoteSideEffect,
                 updateNote::updateNoteSideEffect,
-                deleteNote::deleteNoteSideEffect
+                deleteNote::deleteNoteSideEffect,
+                getNote::getNoteSideEffect
             ),
             reducer = ::reducer
         )
@@ -86,7 +107,12 @@ class AppStateMachine(getNotes: GetNotes, insertNote: InsertNote, updateNote: Up
 
         return when (action) {
 
-            is NoteAction.GetNotesAction -> state.copy(showSortOption = false)
+            is NoteAction.GetNotesAction -> state.copy(
+                showSortOption = false,
+                noteId = null,
+                note = null,
+                editingNote = null
+            )
 
             is NoteAction.SortOrderNotesAction -> state.copy(
                 loading = true,
@@ -101,9 +127,23 @@ class AppStateMachine(getNotes: GetNotes, insertNote: InsertNote, updateNote: Up
 
             is NoteAction.ShowNotesSortOptionsAction -> state.copy(showSortOption = true)
 
-            is NoteAction.HideNotesSortOptionsAction -> state.copy(showSortOption = false)
+            is NoteAction.HideNotesSortOptionsAction, is NoteAction.HidingNotesSortOptionsAction -> state.copy(
+                showSortOption = false
+            )
 
             is NoteAction.InsertNoteAction -> state.copy(loading = false)
+
+            is NoteAction.ViewNoteDetailAction -> state.copy(noteId = action.id, note = null, editingNote = null)
+
+            is NoteAction.NoteLoadedAction -> state.copy(loading = false, note = action.note)
+
+            is NoteAction.OpenEditNoteAction -> state.copy(editingNote = state.note)
+
+            is NoteAction.CloseEditNoteAction -> state.copy(editingNote = null)
+
+            is NoteAction.SaveEditNoteProgressAction -> state.copy(editingNote = action.editNote)
+
+            //is NoteAction.CloseNoteDetailAction -> state.copy(noteId = null, note = null)
 
             else -> state
         }

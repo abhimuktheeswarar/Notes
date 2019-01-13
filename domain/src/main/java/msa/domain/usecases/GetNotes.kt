@@ -43,7 +43,7 @@ class GetNotes(
     fun sortOrderNotesSideEffect(actions: Observable<Action>, state: StateAccessor<State>): Observable<Action> =
         actions.ofType(NoteAction.SortOrderNotesAction::class.java)
             .doOnNext { println("Got SortOrderNotesAction") }
-            .switchMap { execute(it, state()) }
+            .switchMap { execute(it, state()).startWith(NoteAction.HidingNotesSortOptionsAction) }
 
     private fun reArrange(notes: List<Note>, sortBy: SortBy, orderBy: OrderBy): List<Note> {
 

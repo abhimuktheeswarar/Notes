@@ -17,4 +17,6 @@ interface Repository {
     fun updateNote(note: Note): Completable
 
     fun deleteNote(note: Note): Completable
+
+    fun getNote(id: Int): Observable<Note>
 }

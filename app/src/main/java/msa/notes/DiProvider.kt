@@ -6,10 +6,7 @@ import msa.data.DataStoreFactory
 import msa.data.NotesRepository
 import msa.domain.repository.Repository
 import msa.domain.statemachine.AppStateMachine
-import msa.domain.usecases.DeleteNote
-import msa.domain.usecases.GetNotes
-import msa.domain.usecases.InsertNote
-import msa.domain.usecases.UpdateNote
+import msa.domain.usecases.*
 import org.koin.androidx.viewmodel.ext.koin.viewModel
 import org.koin.dsl.module.module
 
@@ -27,7 +24,7 @@ val appModule = module {
 
 val stateMachineModule = module {
 
-    factory { AppStateMachine(get(), get(), get(), get()) }
+    factory { AppStateMachine(get(), get(), get(), get(), get()) }
 }
 
 val useCaseModule = module {
@@ -36,6 +33,7 @@ val useCaseModule = module {
     factory { InsertNote(get(), get(name = "threadExecutor"), get(name = "postExecutionScheduler")) }
     factory { UpdateNote(get(), get(name = "threadExecutor"), get(name = "postExecutionScheduler")) }
     factory { DeleteNote(get(), get(name = "threadExecutor"), get(name = "postExecutionScheduler")) }
+    factory { GetNote(get(), get(name = "threadExecutor"), get(name = "postExecutionScheduler")) }
 }
 
 val viewModelModule = module {
