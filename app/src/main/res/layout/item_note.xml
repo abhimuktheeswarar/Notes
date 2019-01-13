@@ -53,6 +53,7 @@
             android:layout_marginStart="16dp"
             android:background="?attr/selectableItemBackground"
             android:padding="8dp"
+            android:visibility="gone"
             android:src="@drawable/ic_delete"
             app:layout_constraintBottom_toBottomOf="@id/text_date"
             app:layout_constraintEnd_toEndOf="parent"

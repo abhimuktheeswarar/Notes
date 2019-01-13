@@ -20,6 +20,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="noteDetailFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-138" />
+                            <option name="y" value="-265" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="notesFragment">
                     <value>
                       <LayoutPositions>
@@ -30,6 +42,11 @@
                           </Point>
                         </option>
                       </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="open_insertUpdateNote">
+                    <value>
+                      <LayoutPositions />
                     </value>
                   </entry>
                 </map>

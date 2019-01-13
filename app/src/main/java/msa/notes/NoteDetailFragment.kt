@@ -1,9 +1,11 @@
 package msa.notes
 
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateUtils
-import android.view.View
+import android.view.*
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -14,6 +16,7 @@ import msa.notes.base.BaseFragment
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 
+
 /**
  * Created by Abhi Muktheeswarar.
  */
@@ -21,6 +24,11 @@ import timber.log.Timber
 class NoteDetailFragment : BaseFragment() {
 
     private val notesViewModel by sharedViewModel<NotesViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun getLayoutId(): Int = R.layout.fragment_note_detail
 
@@ -30,6 +38,61 @@ class NoteDetailFragment : BaseFragment() {
 
             notesViewModel.input.accept(NoteAction.OpenEditNoteAction)
             findNavController().navigate(R.id.insertUpdateNoteFragment)
+        }
+
+        image_note.setOnTouchListener { v, event ->
+
+            Timber.d("action = ${event.action}")
+
+            return@setOnTouchListener when (event.action) {
+
+                MotionEvent.ACTION_DOWN -> {
+
+                    val matrix = ColorMatrix()
+                    matrix.setSaturation(0f)
+                    val filter = ColorMatrixColorFilter(matrix)
+                    image_note.colorFilter = filter
+                    true
+                }
+
+                MotionEvent.ACTION_UP -> {
+
+                    image_note.colorFilter = null
+                    true
+
+                }
+
+                else -> false
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        val deleteMenuItem = menu.add(Menu.NONE, 2, Menu.NONE, "Delete")
+        deleteMenuItem.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        deleteMenuItem.setIcon(R.drawable.ic_delete_white)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+
+            2 -> {
+                val note = (notesViewModel.state.value as? NoteState)?.note!!
+                notesViewModel.input.accept(
+                    NoteAction.DeleteNoteAction(
+                        id = note.id!!,
+                        title = note.title,
+                        body = note.body,
+                        date = note.date,
+                        imagePath = note.imagePath
+                    )
+                )
+                activity?.onBackPressed()
+                true
+
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
