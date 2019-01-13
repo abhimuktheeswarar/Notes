@@ -1,6 +1,8 @@
 package msa.data.local.room
 
 import androidx.room.*
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import io.reactivex.Observable
 import msa.domain.entities.Note
 import java.util.*
@@ -12,15 +14,23 @@ import java.util.*
 data class NoteEntity(
     @PrimaryKey(autoGenerate = true) var id: Int? = null, var title: String,
     var body: String,
-    var date: Date
+    var date: Date,
+    var imagePath: String?
 )
 
 object NoteMapper {
 
-    fun transform(note: Note) = NoteEntity(id = note.id, title = note.title, body = note.body, date = note.date)
+    fun transform(note: Note) =
+        NoteEntity(id = note.id, title = note.title, body = note.body, date = note.date, imagePath = note.imagePath)
 
     fun transform(noteEntity: NoteEntity) =
-        Note(id = noteEntity.id, title = noteEntity.title, body = noteEntity.body, date = noteEntity.date)
+        Note(
+            id = noteEntity.id,
+            title = noteEntity.title,
+            body = noteEntity.body,
+            date = noteEntity.date,
+            imagePath = noteEntity.imagePath
+        )
 }
 
 @Dao
@@ -43,7 +53,7 @@ interface NoteDao {
 
 }
 
-@Database(entities = [NoteEntity::class], version = 1)
+@Database(entities = [NoteEntity::class], version = 2)
 @TypeConverters(Converters::class)
 abstract class NotesDatabase : RoomDatabase() {
 
@@ -61,5 +71,11 @@ class Converters {
     @TypeConverter
     fun dateToTimestamp(date: Date?): Long? {
         return date?.time
+    }
+}
+
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE NoteEntity ADD COLUMN imagePath STRING")
     }
 }

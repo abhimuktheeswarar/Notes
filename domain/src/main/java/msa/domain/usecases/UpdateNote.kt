@@ -23,12 +23,14 @@ class UpdateNote(
 
     override fun buildUseCaseObservable(action: Action, state: State): Observable<Action> {
         val receivedAction = action as NoteAction.UpdateNoteAction
+        println(receivedAction)
         val note =
             Note(
                 id = action.id,
                 title = receivedAction.title,
                 body = receivedAction.body,
-                date = Date(System.currentTimeMillis())
+                date = Date(System.currentTimeMillis()),
+                imagePath = action.imagePath
             )
         return repository.updateNote(note).toObservable()
     }

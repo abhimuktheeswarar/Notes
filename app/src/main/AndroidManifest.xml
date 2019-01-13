@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="msa.notes">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".NotesApplication"
         android:allowBackup="true"

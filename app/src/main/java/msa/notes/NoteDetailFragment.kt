@@ -1,14 +1,18 @@
 package msa.notes
 
+import android.net.Uri
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_note_detail.*
 import msa.domain.statemachine.NoteAction
 import msa.domain.statemachine.NoteState
 import msa.notes.base.BaseFragment
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
+import timber.log.Timber
 
 /**
  * Created by Abhi Muktheeswarar.
@@ -47,6 +51,16 @@ class NoteDetailFragment : BaseFragment() {
 
             text_title.text = note.title
             text_body.text = note.body
+
+            text_date.text = DateUtils.getRelativeTimeSpanString(
+                note.date.time,
+                System.currentTimeMillis(),
+                DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.FORMAT_ABBREV_RELATIVE
+            )
+            Timber.d(note.toString())
+
+            note.imagePath?.let { Glide.with(image_note).load(Uri.parse(it)).into(image_note) }
 
         }
     }

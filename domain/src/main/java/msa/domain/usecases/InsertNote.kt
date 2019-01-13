@@ -24,7 +24,12 @@ class InsertNote(
     override fun buildUseCaseObservable(action: Action, state: State): Observable<Action> {
         val receivedAction = action as NoteAction.InsertNoteAction
         val note =
-            Note(title = receivedAction.title, body = receivedAction.body, date = Date(System.currentTimeMillis()))
+            Note(
+                title = receivedAction.title,
+                body = receivedAction.body,
+                date = Date(System.currentTimeMillis()),
+                imagePath = action.imagePath
+            )
         return repository.insertNote(note).toObservable()
     }
 

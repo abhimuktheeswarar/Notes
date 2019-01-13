@@ -28,7 +28,8 @@ class DeleteNote(
                 id = action.id,
                 title = receivedAction.title,
                 body = receivedAction.body,
-                date = Date(System.currentTimeMillis())
+                date = Date(System.currentTimeMillis()),
+                imagePath = action.imagePath
             )
         return repository.deleteNote(note).toObservable()
     }

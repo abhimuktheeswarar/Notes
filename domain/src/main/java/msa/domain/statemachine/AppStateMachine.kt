@@ -33,11 +33,24 @@ sealed class NoteAction : Action {
 
     object HideNotesSortOptionsAction : NoteAction()
 
-    data class InsertNoteAction(val title: String, val body: String, val date: Date) : NoteAction()
+    data class InsertNoteAction(val title: String, val body: String, val date: Date, val imagePath: String?) :
+        NoteAction()
 
-    data class UpdateNoteAction(val id: Int, val title: String, val body: String, val date: Date) : NoteAction()
+    data class UpdateNoteAction(
+        val id: Int,
+        val title: String,
+        val body: String,
+        val date: Date,
+        val imagePath: String?
+    ) : NoteAction()
 
-    data class DeleteNoteAction(val id: Int, val title: String, val body: String, val date: Date) : NoteAction()
+    data class DeleteNoteAction(
+        val id: Int,
+        val title: String,
+        val body: String,
+        val date: Date,
+        val imagePath: String? = null
+    ) : NoteAction()
 
     data class ViewNoteDetailAction(val id: Int) : NoteAction()
 

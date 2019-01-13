@@ -3,6 +3,7 @@ package msa.data
 import android.content.Context
 import androidx.room.Room
 import msa.data.local.LocalDataStore
+import msa.data.local.room.MIGRATION_1_2
 import msa.data.local.room.NotesDatabase
 
 /**
@@ -17,7 +18,7 @@ class DataStoreFactory(applicationContext: Context) {
         val notesDatabase = Room.databaseBuilder(
             applicationContext,
             NotesDatabase::class.java, "notes"
-        ).build()
+        ).addMigrations(MIGRATION_1_2).build()
 
         localDataStore = LocalDataStore(notesDatabase)
     }

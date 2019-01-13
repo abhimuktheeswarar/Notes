@@ -68,6 +68,7 @@ dependencies {
     implementation androidLibraries.glide
     kapt androidLibraries.glideProcessor
     implementation androidLibraries.runtimePermission
+    implementation androidLibraries.inlineActivityResult
     implementation androidLibraries.materialDialogsCore
 
     implementation androidLibraries.materialProgressBar
